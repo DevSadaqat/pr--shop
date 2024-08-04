@@ -3,8 +3,6 @@ import express from 'express';
 import multer from 'multer';
 const router = express.Router();
 
-console.log('Hello from the file upload route');
-
 //DEV NOTE: file storage can be upload on S3 as well. for our use case
 // we will upload to our server
 const storage = multer.diskStorage({

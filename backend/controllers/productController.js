@@ -5,8 +5,24 @@ import Product from '../models/productModel.js';
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
-  res.json(products);
+  const pageSize = 4;
+  const page = Number(req.query.pageNumber) || 1;
+
+  console.log('req.query.keyword: ', req.query.keyword);
+  // for search req
+  const keyword = req.query.keyword
+    ? {
+        //used options 'i' so considers  case-in-sensitive keywords i.e IPHONE or iphone
+        name: { $regex: req.query.keyword, $options: 'i' },
+      }
+    : {};
+
+  //count and find the products from DB for the searched keyword only
+  const count = await Product.countDocuments({ ...keyword });
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single product

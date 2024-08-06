@@ -7,8 +7,6 @@ import Product from '../models/productModel.js';
 const getProducts = asyncHandler(async (req, res) => {
   const pageSize = 4;
   const page = Number(req.query.pageNumber) || 1;
-
-  console.log('req.query.keyword: ', req.query.keyword);
   // for search req
   const keyword = req.query.keyword
     ? {
@@ -149,9 +147,15 @@ const createProductReview = asyncHandler(async (req, res) => {
 // @route   GET /api/products/top
 // @access  Public
 const getTopProducts = asyncHandler(async (req, res) => {
+  console.log('req hiiting backend func');
   const products = await Product.find({}).sort({ rating: -1 }).limit(3);
 
-  res.json(products);
+  if (products) {
+    res.json(products);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
 });
 
 export {
